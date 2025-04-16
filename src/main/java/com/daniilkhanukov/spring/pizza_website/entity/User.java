@@ -1,6 +1,10 @@
 package com.daniilkhanukov.spring.pizza_website.entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "users")
@@ -29,23 +33,19 @@ public class User {
     @Column(name = "role")
     private String role;
 
-    @Column(name = "accumulated_points")
-    private int accumulatedPoints;
-
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Cart cart;
 
     public User() {
     }
 
-    public User(String username, String password, String email, String phone, String userAddress, String role, int accumulatedPoints, Cart cart) {
+    public User(String username, String password, String email, String phone, String userAddress, String role, Cart cart) {
         this.username = username;
         this.password = password;
         this.email = email;
         this.phone = phone;
         this.userAddress = userAddress;
         this.role = role;
-        this.accumulatedPoints = accumulatedPoints;
         this.cart = cart;
     }
 
@@ -103,14 +103,6 @@ public class User {
 
     public void setRole(String role) {
         this.role = role;
-    }
-
-    public int getAccumulatedPoints() {
-        return accumulatedPoints;
-    }
-
-    public void setAccumulatedPoints(int accumulatedPoints) {
-        this.accumulatedPoints = accumulatedPoints;
     }
 
     public Cart getCart() {

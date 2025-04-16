@@ -23,6 +23,17 @@ public class Pizza {
     @Column(name = "availability")
     private boolean availability;
 
+//    private String imageUrl = "src/main/resources/static/images/pizza10.jpg"; // Путь к изображению
+//
+//    // Геттеры и сеттеры
+//    public String getImageUrl() {
+//        return imageUrl;
+//    }
+//
+//    public void setImageUrl(String imageUrl) {
+//        this.imageUrl = imageUrl;
+//    }
+
     public Pizza() {
     }
 

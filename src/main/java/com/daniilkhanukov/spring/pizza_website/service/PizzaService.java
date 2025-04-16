@@ -13,4 +13,5 @@ public interface PizzaService {
     void delete(Pizza pizza);
     void deleteById(Integer id);
     void toggleActiveStatus(Integer pizzaId);
+    void changePrice(Integer pizzaId, Double price);
 }

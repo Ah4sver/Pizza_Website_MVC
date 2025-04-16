@@ -3,10 +3,13 @@ package com.daniilkhanukov.spring.pizza_website.service;
 import com.daniilkhanukov.spring.pizza_website.entity.Cart;
 import com.daniilkhanukov.spring.pizza_website.entity.CartItem;
 import com.daniilkhanukov.spring.pizza_website.entity.Pizza;
+import com.daniilkhanukov.spring.pizza_website.entity.User;
 import com.daniilkhanukov.spring.pizza_website.repository.CartRepository;
+import com.daniilkhanukov.spring.pizza_website.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,10 +18,11 @@ import java.util.Optional;
 public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
-
+    private final UserRepository userRepository;
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository) {
+    public CartServiceImpl(CartRepository cartRepository, UserRepository userRepository) {
         this.cartRepository = cartRepository;
+        this.userRepository = userRepository;
     }
 
     @Override
@@ -50,14 +54,35 @@ public class CartServiceImpl implements CartService {
     public Cart findByUserId(Integer userId) {
         return cartRepository.findByUserId(userId);
     }
-    //-----------------------------------------------------------------------------------------------------------------
-    //------------------------------------В--О--Т----Т--У--Т----Ч--Е--К--Н--И------------------------------------------
-    //-----------------------------------------------------------------------------------------------------------------
+
+
+    /// /////////////////////////////////
+    /// ////////////////////
+    ///
+    ///
+    ///
+    ///
+    /// сука тут    |
+    ///            V
+    ///
+    ///
+    ///
+    /// ////////////////////
+    /// ///////////////////////////////////
     @Override
     public Cart addItemToCart(Integer userId, Pizza pizza, int quantity) {
         Cart cart = cartRepository.findByUserId(userId);
         if (cart == null) {
-            throw new RuntimeException("Cart not found for user id: " + userId);
+            Optional<User> user = userRepository.findById(userId);
+            if (user.isPresent()) {
+                User userEntity = user.get();
+                Cart newCart = new Cart();
+                newCart.setUser(userEntity);
+                newCart.setItems(new ArrayList<>());
+                newCart.setTotalCost(0.0);
+                return cartRepository.save(newCart);
+            }
+            throw new RuntimeException("Корзина для данного пользователя не была найдена. Id пользователя: " + userId);
         }
         Optional<CartItem> existingItem = cart.getItems().stream()
                 .filter(item -> Objects.equals(item.getPizza().getId(), pizza.getId()))
@@ -87,13 +112,33 @@ public class CartServiceImpl implements CartService {
         return cartRepository.save(cart);
     }
 
+//    @Override
+//    public void clearCart(Integer userId) {
+//        Optional<User> user = userRepository.findById(userId);
+//        if (user.isPresent()) {
+//            User userEntity = user.get();
+//            Cart newCart = new Cart();
+//            newCart.setUser(userEntity);
+//            newCart.setItems(new ArrayList<>());
+//            newCart.setTotalCost(0.0);
+//            cartRepository.save(newCart);
+//        } else {
+//            throw new RuntimeException("При очистке корзины возникла ошибка");
+//        }
+//
+//    }
+
     @Override
-    public void clearCart(Integer userId) {
-        Cart cart = cartRepository.findByUserId(userId);
-        if (cart != null) {
-            cart.getItems().clear();
-            cart.setTotalCost(0.0);
-            cartRepository.save(cart);
-        }
+    public void increaseQuantity(Integer userId, Integer pizzaId) {
+        Cart cart = findByUserId(userId); // Находим корзину
+        cart.increaseQuantity(pizzaId); // Вызываем метод из Cart для увеличения
+        cartRepository.save(cart); // Сохраняем изменения в базе
+    }
+
+    @Override
+    public void decreaseQuantity(Integer userId, Integer pizzaId) {
+        Cart cart = findByUserId(userId); // Находим корзину
+        cart.decreaseQuantity(pizzaId); // Вызываем метод из Cart для уменьшения
+        cartRepository.save(cart); // Сохраняем изменения в базе
     }
 }

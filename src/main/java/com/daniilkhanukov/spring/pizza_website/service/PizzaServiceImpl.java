@@ -43,7 +43,7 @@ public class PizzaServiceImpl implements PizzaService {
 
     @Override
     public List<Pizza> findAll() {
-        return pizzaRepository.findAll();
+        return pizzaRepository.findAllByOrderByNameAsc();
     }
 
     @Override
@@ -59,8 +59,16 @@ public class PizzaServiceImpl implements PizzaService {
     @Override
     public void toggleActiveStatus(Integer pizzaId) {
         Pizza pizza = pizzaRepository.findById(pizzaId)
-                .orElseThrow(() -> new RuntimeException("Pizza not found with id: " + pizzaId));
+                .orElseThrow(() -> new RuntimeException("Пицца с id " + pizzaId + " не была найдена"));
         pizza.setAvailability(!pizza.isAvailability());
+        pizzaRepository.save(pizza);
+    }
+
+    @Override
+    public void changePrice(Integer pizzaId, Double price) {
+        Pizza pizza = pizzaRepository.findById(pizzaId)
+                .orElseThrow(() -> new RuntimeException("Пицца с id " + pizzaId + " не была найдена"));
+        pizza.setPrice(price);
         pizzaRepository.save(pizza);
     }
 }

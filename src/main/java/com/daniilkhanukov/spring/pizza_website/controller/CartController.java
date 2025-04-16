@@ -1,49 +1,190 @@
 package com.daniilkhanukov.spring.pizza_website.controller;
 
-import com.daniilkhanukov.spring.pizza_website.entity.Cart;
+import com.daniilkhanukov.spring.pizza_website.entity.*;
 import com.daniilkhanukov.spring.pizza_website.service.CartServiceImpl;
 import com.daniilkhanukov.spring.pizza_website.service.OrderServiceImpl;
+import com.daniilkhanukov.spring.pizza_website.service.PizzaServiceImpl;
+import com.daniilkhanukov.spring.pizza_website.service.UserServiceImpl;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.security.Principal;
+import java.util.Optional;
 
 @Controller
 public class CartController {
     private final CartServiceImpl cartService;
     private final OrderServiceImpl orderService;
+    private final PizzaServiceImpl pizzaService; // Предполагаю, что у тебя есть сервис для пицц
+    private final UserServiceImpl userServiceImpl;
 
     @Autowired
-    public CartController(CartServiceImpl cartService, OrderServiceImpl orderService) {
+    public CartController(CartServiceImpl cartService, OrderServiceImpl orderService, PizzaServiceImpl pizzaService, UserServiceImpl userServiceImpl) {
         this.cartService = cartService;
         this.orderService = orderService;
+        this.pizzaService = pizzaService;
+        this.userServiceImpl = userServiceImpl;
     }
 
-    private Cart getOrCreateCart(HttpSession session) {
-        Cart cart = (Cart) session.getAttribute("cart");
-        if (cart == null) {
-            cart = new Cart();
-            session.setAttribute("cart", cart);
+    // Получение или создание сессионной корзины для анонимных пользователей
+    private SessionCart getSessionCart(HttpSession session) {
+        SessionCart sessionCart = (SessionCart) session.getAttribute("sessionCart");
+        if (sessionCart == null) {
+            sessionCart = new SessionCart();
+            session.setAttribute("sessionCart", sessionCart);
         }
-        return cart;
+        return sessionCart;
     }
 
+
+
+    // Просмотр корзины для анонимных пользователей
+    @GetMapping("/cart/anonymous")
+    public String viewAnonymousCart(Model model, HttpSession session) {
+        SessionCart sessionCart = getSessionCart(session);
+        model.addAttribute("cart", sessionCart);
+        return "anonCart"; // Предполагается общий шаблон для корзины
+    }
+
+    // Просмотр корзины для авторизованных пользователей
     @GetMapping("/cart")
-    public String viewCart(Model model, HttpSession session) {
-        Cart cart = getOrCreateCart(session);
+    public String viewCart(Model model, Principal principal) {
+        if (principal == null) {
+            return "redirect:/cart/anonymous"; // Если пользователь не авторизован, перенаправляем
+        }
+        User user = getCurrentUser(principal); // Предполагается метод для получения пользователя
+        Cart cart = null;
+        if (cartService.findByUserId(user.getId()) == null) {
+            cart = new Cart();
+        } else {
+            cart = cartService.findByUserId(user.getId());
+        }
         model.addAttribute("cart", cart);
+        model.addAttribute("user", user);
         return "cart";
     }
 
+    @GetMapping("/cart/anonymous/remove/{pizzaId}")
+    public String removeFromAnonymousCart(@PathVariable Integer pizzaId, HttpSession session) {
+        SessionCart sessionCart = (SessionCart) session.getAttribute("sessionCart");
+        if (sessionCart != null) {
+            sessionCart.removeItem(pizzaId); // Удаляем товар по ID
+        }
+        return "redirect:/cart/anonymous"; // Перенаправляем обратно на страницу корзины
+    }
+    // Метод для увеличения количества пиццы
+    @GetMapping("/cart/anonymous/increase/{pizzaId}")
+    public String increaseAnonymousQuantity(@PathVariable Integer pizzaId, HttpSession session) {
+        SessionCart sessionCart = (SessionCart) session.getAttribute("sessionCart");
+        if (sessionCart != null) {
+            sessionCart.increaseAnonymousQuantity(pizzaId);
+        }
+        return "redirect:/cart/anonymous";
+    }
+
+    // Метод для уменьшения количества пиццы
+    @GetMapping("/cart/anonymous/decrease/{pizzaId}")
+    public String decreaseAnonymousQuantity(@PathVariable Integer pizzaId, HttpSession session) {
+        SessionCart sessionCart = (SessionCart) session.getAttribute("sessionCart");
+        if (sessionCart != null) {
+            sessionCart.decreaseAnonymousQuantity(pizzaId);
+        }
+        return "redirect:/cart/anonymous";
+    }
+
+    // Удаление товара из корзины авторизованного пользователя
+    @GetMapping("/cart/remove/{pizzaId}")
+    public String removeFromCart(@PathVariable Integer pizzaId, Principal principal) {
+        if (principal == null) {
+            return "redirect:/cart/anonymous/remove/" + pizzaId;
+        }
+        User user = getCurrentUser(principal);
+        cartService.removeItemFromCart(user.getId(), pizzaId);
+        return "redirect:/cart";
+    }
+
+    // Увеличение количества в корзине авторизованного пользователя
+    @GetMapping("/cart/increase/{pizzaId}")
+    public String increaseQuantity(@PathVariable Integer pizzaId, Principal principal) {
+        if (principal == null) {
+            return "redirect:/cart/anonymous/increase/" + pizzaId;
+        }
+        User user = getCurrentUser(principal);
+        cartService.increaseQuantity(user.getId(), pizzaId);
+        return "redirect:/cart";
+    }
+
+    // Уменьшение количества в корзине авторизованного пользователя
+    @GetMapping("/cart/decrease/{pizzaId}")
+    public String decreaseQuantity(@PathVariable Integer pizzaId, Principal principal) {
+        if (principal == null) {
+            return "redirect:/cart/anonymous/decrease/" + pizzaId;
+        }
+        User user = getCurrentUser(principal);
+        cartService.decreaseQuantity(user.getId(), pizzaId);
+        return "redirect:/cart";
+    }
+
+//    @GetMapping("/cart/add/{pizzaId}")
+//    public String addToCart(@PathVariable Integer pizzaId, HttpSession session) {
+//        Cart cart = getOrCreateCart(session);
+//        cartService.addItemToCart(cart, pizzaId, 1); // Добавляем 1 пиццу
+//        return "redirect:/pizza";
+//    }
 
     @GetMapping("/cart/add/{pizzaId}")
-    public String addToCart(@PathVariable Integer pizzaId, HttpSession session) {
-        Cart cart = getOrCreateCart(session);
-        cartService.addItemToCart(cart, pizzaId, 1); // Добавляем 1 пиццу
+    public String addToCart(@PathVariable Integer pizzaId, HttpSession session, Principal principal) {
+        Optional<Pizza> pizzaOptional = pizzaService.findById(pizzaId);
+        if (!pizzaOptional.isPresent()) {
+            return "redirect:/pizza?error=Pizza+not+found";
+        }
+        Pizza pizza = pizzaOptional.get();
+
+        if (principal != null) {
+            // Авторизованный пользователь
+            User user = getCurrentUser(principal);
+            cartService.addItemToCart(user.getId(), pizza, 1);// Добавляем через сервис
+        } else {
+            // Анонимный пользователь
+            SessionCart sessionCart = getSessionCart(session);
+            SessionCartItem item = new SessionCartItem(pizza, 1);
+            sessionCart.addItem(item); // Предполагается, что в SessionCart есть метод addItem
+        }
         return "redirect:/pizza";
+    }
+
+    @GetMapping("/order/success")
+    public String orderSuccess() {
+        return "order-success"; // Возвращает имя файла orderSuccess.jsp
+    }
+
+    @PostMapping("/cart/order")
+    public String createOrder(@RequestParam String deliveryAddress, Principal principal, Model model) {
+        User user = getCurrentUser(principal); // Получаем текущего пользователя
+        Cart cart = cartService.findByUserId(user.getId()); // Получаем корзину пользователя
+        if (cart == null || cart.getItems().isEmpty()) {
+            model.addAttribute("error", "Ваша корзина пуста \n Время выбрать любимую пиццу!");
+            return "cart"; // предположим, что страница корзины называется "cart"
+        }
+        Order order = new Order(deliveryAddress, cart, user); // Создаём заказ
+        orderService.save(order); // Сохраняем заказ в базе данных
+        return "redirect:/order/success"; // Перенаправляем на страницу успеха
+    }
+
+    private User getCurrentUser(Principal principal) {
+        String email = principal.getName(); // Предполагаем, что это email
+        Optional<User> optionalUser = userServiceImpl.findByEmail(email);
+        if (!optionalUser.isPresent()) {
+            throw new RuntimeException("Данного пользователя нет");
+        }
+        User user = optionalUser.get();
+        return user; // Предполагается, что у тебя есть userService
     }
 
 

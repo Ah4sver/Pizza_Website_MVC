@@ -35,6 +35,8 @@ public class MyConfig {
         return viewResolver;
     }
 
+
+
     //Знаю про существование HikariCP, но практиковался на c3p0, поэтому использую его
 //    @Bean
 //    public DataSource dataSource(){

@@ -3,6 +3,7 @@ package com.daniilkhanukov.spring.pizza_website.service;
 import com.daniilkhanukov.spring.pizza_website.entity.User;
 import com.daniilkhanukov.spring.pizza_website.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,6 +11,9 @@ import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private final UserRepository userRepository;
 
@@ -34,6 +38,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
     public List<User> findAll() {
         return userRepository.findAll();
     }
@@ -50,8 +59,12 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public RegistrationResult registerUser(User user) {
-        if (userRepository.findByEmail(user.getEmail()) != null) {
+        if (userRepository.findByEmail(user.getEmail()).isPresent()) {
             return new RegistrationResult(false, "Данная почта уже используется");
+        }
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if (user.getRole() == null || user.getRole().isBlank()) {
+            user.setRole("USER");
         }
         userRepository.save(user);
         return new RegistrationResult(true, "Регистрация прошла успешно");
