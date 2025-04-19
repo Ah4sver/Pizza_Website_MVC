@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "orders")
@@ -64,5 +65,19 @@ public class Order {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        String pizzasSummary = cart.getItems().stream()
+                .map(item -> item.getPizza().getName() + " x" + item.getQuantity())
+                .collect(Collectors.joining(", "));
+
+        return "Order{" +
+                "id=" + id +
+                ", user=" + (user != null ? user.getUsername() : "anonymous") +
+                ", address='" + deliveryAddress + '\'' +
+                ", items=[" + pizzasSummary + "]" +
+                '}';
     }
 }

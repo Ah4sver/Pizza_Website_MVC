@@ -158,16 +158,31 @@
     <h3>Итого: ${cart.totalCost} руб.</h3>
     <form method="post" action="/cart/order">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-        <div>
-            <label for="deliveryAddress">Укажите адрес доставки:</label>
-            <input type="text" id="deliveryAddress" name="deliveryAddress"
-                   placeholder="Укажите точный адрес: 'Город, улица, дом, код от домофона'"/>
-        </div>
+        <label for="deliveryAddress">Укажите адрес доставки:</label>
+        <br>
+        <input type="text" id="deliveryAddress" name="deliveryAddress"
+               placeholder="Укажите точный адрес: 'Город, улица, дом, код от домофона'"
+               style="width: 500px;"
+               value="<c:out value='${user.userAddress}'/>">
+        <br>
+        <br>
         <button type="submit">Оформить заказ</button>
+        <br>
+        <br>
     </form>
-    <div class="links">
-        <a href="/pizza">Вернуться на главную</a>
-    </div>
+    <a href="/pizza">Вернуться на главную</a>
+<%--    <form method="post" action="/cart/order">--%>
+<%--        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
+<%--        <div>--%>
+<%--            <label for="deliveryAddress">Укажите адрес доставки:</label>--%>
+<%--            <input type="text" id="deliveryAddress" name="deliveryAddress"--%>
+<%--                   placeholder="Укажите точный адрес: 'Город, улица, дом, код от домофона'"/>--%>
+<%--        </div>--%>
+<%--        <button type="submit">Оформить заказ</button>--%>
+<%--    </form>--%>
+<%--    <div class="links">--%>
+<%--        <a href="/pizza">Вернуться на главную</a>--%>
+<%--    </div>--%>
 </div>
 </body>
 </html>

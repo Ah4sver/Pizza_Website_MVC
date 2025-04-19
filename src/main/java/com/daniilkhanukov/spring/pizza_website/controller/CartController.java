@@ -21,7 +21,7 @@ import java.util.Optional;
 public class CartController {
     private final CartServiceImpl cartService;
     private final OrderServiceImpl orderService;
-    private final PizzaServiceImpl pizzaService; // Предполагаю, что у тебя есть сервис для пицц
+    private final PizzaServiceImpl pizzaService;
     private final UserServiceImpl userServiceImpl;
 
     @Autowired
@@ -42,23 +42,21 @@ public class CartController {
         return sessionCart;
     }
 
-
-
     // Просмотр корзины для анонимных пользователей
     @GetMapping("/cart/anonymous")
     public String viewAnonymousCart(Model model, HttpSession session) {
         SessionCart sessionCart = getSessionCart(session);
         model.addAttribute("cart", sessionCart);
-        return "anonCart"; // Предполагается общий шаблон для корзины
+        return "anonCart";
     }
 
     // Просмотр корзины для авторизованных пользователей
     @GetMapping("/cart")
     public String viewCart(Model model, Principal principal) {
         if (principal == null) {
-            return "redirect:/cart/anonymous"; // Если пользователь не авторизован, перенаправляем
+            return "redirect:/cart/anonymous";
         }
-        User user = getCurrentUser(principal); // Предполагается метод для получения пользователя
+        User user = getCurrentUser(principal);
         Cart cart = null;
         if (cartService.findByUserId(user.getId()) == null) {
             cart = new Cart();
@@ -74,9 +72,9 @@ public class CartController {
     public String removeFromAnonymousCart(@PathVariable Integer pizzaId, HttpSession session) {
         SessionCart sessionCart = (SessionCart) session.getAttribute("sessionCart");
         if (sessionCart != null) {
-            sessionCart.removeItem(pizzaId); // Удаляем товар по ID
+            sessionCart.removeItem(pizzaId);
         }
-        return "redirect:/cart/anonymous"; // Перенаправляем обратно на страницу корзины
+        return "redirect:/cart/anonymous";
     }
     // Метод для увеличения количества пиццы
     @GetMapping("/cart/anonymous/increase/{pizzaId}")
@@ -149,42 +147,42 @@ public class CartController {
         if (principal != null) {
             // Авторизованный пользователь
             User user = getCurrentUser(principal);
-            cartService.addItemToCart(user.getId(), pizza, 1);// Добавляем через сервис
+            cartService.addItemToCart(user.getId(), pizza, 1);
         } else {
             // Анонимный пользователь
             SessionCart sessionCart = getSessionCart(session);
             SessionCartItem item = new SessionCartItem(pizza, 1);
-            sessionCart.addItem(item); // Предполагается, что в SessionCart есть метод addItem
+            sessionCart.addItem(item);
         }
         return "redirect:/pizza";
     }
 
     @GetMapping("/order/success")
     public String orderSuccess() {
-        return "order-success"; // Возвращает имя файла orderSuccess.jsp
+        return "order-success";
     }
 
     @PostMapping("/cart/order")
     public String createOrder(@RequestParam String deliveryAddress, Principal principal, Model model) {
-        User user = getCurrentUser(principal); // Получаем текущего пользователя
-        Cart cart = cartService.findByUserId(user.getId()); // Получаем корзину пользователя
+        User user = getCurrentUser(principal);
+        Cart cart = cartService.findByUserId(user.getId());
         if (cart == null || cart.getItems().isEmpty()) {
             model.addAttribute("error", "Ваша корзина пуста \n Время выбрать любимую пиццу!");
-            return "cart"; // предположим, что страница корзины называется "cart"
+            return "cart";
         }
-        Order order = new Order(deliveryAddress, cart, user); // Создаём заказ
-        orderService.save(order); // Сохраняем заказ в базе данных
-        return "redirect:/order/success"; // Перенаправляем на страницу успеха
+        Order order = new Order(deliveryAddress, cart, user);
+        orderService.save(order);
+        return "redirect:/order/success";
     }
 
     private User getCurrentUser(Principal principal) {
-        String email = principal.getName(); // Предполагаем, что это email
+        String email = principal.getName();
         Optional<User> optionalUser = userServiceImpl.findByEmail(email);
         if (!optionalUser.isPresent()) {
             throw new RuntimeException("Данного пользователя нет");
         }
         User user = optionalUser.get();
-        return user; // Предполагается, что у тебя есть userService
+        return user;
     }
 
 

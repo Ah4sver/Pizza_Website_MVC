@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration scan="true" scanPeriod="60 seconds">
+
+    <!-- Общие свойства -->
+    <property name="LOG_HOME" value="C:\\Users\\dhanu\\OneDrive\\Рабочий стол\\logs"/>
+    <property name="LOG_PATTERN"
+              value="%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n"/><!-- Единый паттерн -->
+
+    <!-- Включаем базовые настройки Spring Boot -->
+    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
+
+    <!-- Консольный аппендер -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Роллинг-файловый аппендер -->
+    <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/pizza_website.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- Ежедневное архивирование -->
+            <fileNamePattern>${LOG_HOME}/pizza_website.%d{yyyy-MM-dd}.log</fileNamePattern>
+            <!-- Хранить логи 30 дней -->
+            <maxHistory>30</maxHistory>
+            <!-- Общий объём файлов не более 5GB -->
+            <totalSizeCap>5GB</totalSizeCap>
+        </rollingPolicy>
+        <encoder>
+            <pattern>${LOG_PATTERN}</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Уровни логирования -->
+    <logger name="com.daniilkhanukov" level="DEBUG"/>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="org.springframework.web" level="WARN"/>
+    <logger name="org.springframework.security" level="WARN"/>
+    <logger name="org.springframework.security.web" level="WARN"/>
+    <logger name="org.springframework.security.web.FilterChainProxy" level="ERROR"/>
+    <logger name="org.springframework.security.web.context.HttpSessionSecurityContextRepository" level="ERROR"/>
+
+    <!-- Корневой логгер -->
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="ROLLING"/>
+    </root>
+
+</configuration>
+
+
+
+
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<configuration>-->
+<!--    <appender name="STDOUT"-->
+<!--              class="ch.qos.logback.core.ConsoleAppender">-->
+<!--        &lt;!&ndash; encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder-->
+<!--            by default &ndash;&gt;-->
+<!--        <encoder>-->
+<!--            <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level  %logger{20} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+<!--    <appender name="FILE"-->
+<!--              class="ch.qos.logback.core.rolling.RollingFileAppender">-->
+<!--        <file>slf4jlogbackexample.log</file>-->
+<!--        <rollingPolicy-->
+<!--                class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">-->
+<!--            &lt;!&ndash; daily rollover &ndash;&gt;-->
+<!--            <fileNamePattern>slf4jlogbackexample.%d{yyyy-MM-dd}.log</fileNamePattern>-->
+
+<!--            &lt;!&ndash; Храним файлы логов 10 дней &ndash;&gt;-->
+<!--            <maxHistory>10</maxHistory>-->
+
+<!--            &lt;!&ndash; Максимальный размер файлов лога 30 гигабайт &ndash;&gt;-->
+<!--            <totalSizeCap>10GB</totalSizeCap>-->
+
+<!--        </rollingPolicy>-->
+<!--        <encoder>-->
+<!--            <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level  %logger{20} - %msg%n</pattern>-->
+<!--        </encoder>-->
+<!--    </appender>-->
+
+<!--    <root level="debug">-->
+<!--        <appender-ref ref="STDOUT" />-->
+<!--        <appender-ref ref="FILE" />-->
+<!--    </root>-->
+<!--</configuration>-->
+
+        <!--<?xml version="1.0" encoding="UTF-8"?>-->
+        <!--<configuration>-->
+        <!--    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">-->
+        <!--        &lt;!&ndash; encoders are assigned the type-->
+        <!--             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default &ndash;&gt;-->
+        <!--        <encoder>-->
+        <!--            <pattern>%d{dd.MM.yyyy HH:mm:ss.SSS} [%thread] %-5level %logger{20} - %msg%n</pattern>-->
+        <!--        </encoder>-->
+        <!--    </appender>-->
+
+        <!--    <root level="debug">-->
+        <!--        <appender-ref ref="STDOUT" />-->
+        <!--    </root>-->
+        <!--</configuration>-->

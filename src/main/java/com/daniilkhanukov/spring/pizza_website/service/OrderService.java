@@ -11,6 +11,6 @@ public interface OrderService {
     Optional<Order> findById(Integer id);
     List<Order> findAll();
     void delete(Order order);
-    Order processOrder(Integer userId, String deliveryAddress);
-    void clearCart(Integer userId);
+//    Order processOrder(Integer userId, String deliveryAddress);
+//    void clearCart(Integer userId);
 }

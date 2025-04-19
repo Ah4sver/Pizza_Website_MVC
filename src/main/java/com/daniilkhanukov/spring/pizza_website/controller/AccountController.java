@@ -69,20 +69,17 @@ public class AccountController {
         RegistrationResult result = userService.registerUser(user);
         if (!result.getSuccessStatus()) {
             model.addAttribute("error", result.getMessage());
-            return "register"; // Возвращаем страницу регистрации с сообщением об ошибке
+            return "register";
         }
-        return "redirect:/login"; // Успешная регистрация — перенаправляем на страницу входа
+        return "redirect:/login";
     }
 
     @PostMapping("/account/update")
     public String updateAccountDetails(@ModelAttribute("form") @Valid AccountUpdateForm form,
                                        BindingResult bindingResult,
-//                                        @RequestParam("phone") String phone,
-//                                       @RequestParam("userAddress") String userAddress,
                                        Principal principal,
                                        Model model) {
         if (bindingResult.hasErrors()) {
-            // Если ошибки валидации, переходим обратно на страницу профиля с сообщениями об ошибках
             model.addAttribute("form", form);
             return "account";
         }

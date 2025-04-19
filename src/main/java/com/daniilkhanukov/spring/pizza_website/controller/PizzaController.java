@@ -18,7 +18,6 @@ public class PizzaController {
     @GetMapping("/pizza")
     public String home(Model model) {
         model.addAttribute("pizzas", pizzaService.findAll());
-        System.out.println("Контроллер /pizza вызван");
         return "home";
     }
 }

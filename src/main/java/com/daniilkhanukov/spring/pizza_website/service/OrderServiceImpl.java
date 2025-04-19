@@ -47,31 +47,31 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(order);
     }
 
-    @Override
-    public Order processOrder(Integer userId, String deliveryAddress) {
-        Cart cart = cartRepository.findByUserId(userId);
-        if (cart == null || cart.getItems().isEmpty()) {
-            throw new RuntimeException("Корзина пуста или никогда не была создана");
-        }
-
-        Order order = new Order();
-        order.setDeliveryAddress(deliveryAddress);
-        order.setCart(cart);
-
-        orderRepository.save(order);
-
-        clearCart(userId);
-        return null;
-    }
-
-    @Override
-    public void clearCart(Integer userId) {
-        Cart cart = cartRepository.findByUserId(userId);
-        if (cart != null) {
-            cart.getItems().clear();
-            cart.setTotalCost(0.0);
-            cartRepository.save(cart);
-        }
-
-    }
+//    @Override
+//    public Order processOrder(Integer userId, String deliveryAddress) {
+//        Cart cart = cartRepository.findByUserId(userId);
+//        if (cart == null || cart.getItems().isEmpty()) {
+//            throw new RuntimeException("Корзина пуста или никогда не была создана");
+//        }
+//
+//        Order order = new Order();
+//        order.setDeliveryAddress(deliveryAddress);
+//        order.setCart(cart);
+//
+//        orderRepository.save(order);
+//
+//        clearCart(userId);
+//        return null;
+//    }
+//
+//    @Override
+//    public void clearCart(Integer userId) {
+//        Cart cart = cartRepository.findByUserId(userId);
+//        if (cart != null) {
+//            cart.getItems().clear();
+//            cart.setTotalCost(0.0);
+//            cartRepository.save(cart);
+//        }
+//
+//    }
 }

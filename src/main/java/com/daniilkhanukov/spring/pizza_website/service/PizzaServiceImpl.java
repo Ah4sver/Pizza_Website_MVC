@@ -20,7 +20,6 @@ public class PizzaServiceImpl implements PizzaService {
         this.pizzaRepository = pizzaRepository;
     }
 
-
     @Override
     public Pizza save(Pizza pizza) {
         return pizzaRepository.save(pizza);

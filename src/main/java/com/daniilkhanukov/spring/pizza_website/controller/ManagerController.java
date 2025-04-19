@@ -47,7 +47,7 @@ public class ManagerController {
     public String viewOrders(Model model) {
         List<Order> orders = orderService.findAll();
         model.addAttribute("orders", orders);
-        return "manager_orders"; // Имя JSP представления (manager_orders.jsp)
+        return "manager_orders";
     }
 
     @GetMapping("/orders/delete/{orderId}")

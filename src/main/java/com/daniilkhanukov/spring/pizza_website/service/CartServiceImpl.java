@@ -55,20 +55,6 @@ public class CartServiceImpl implements CartService {
         return cartRepository.findByUserId(userId);
     }
 
-
-    /// /////////////////////////////////
-    /// ////////////////////
-    ///
-    ///
-    ///
-    ///
-    /// сука тут    |
-    ///            V
-    ///
-    ///
-    ///
-    /// ////////////////////
-    /// ///////////////////////////////////
     @Override
     public Cart addItemToCart(Integer userId, Pizza pizza, int quantity) {
         Cart cart = cartRepository.findByUserId(userId);
@@ -111,22 +97,6 @@ public class CartServiceImpl implements CartService {
         cart.recalculateTotalCost();
         return cartRepository.save(cart);
     }
-
-//    @Override
-//    public void clearCart(Integer userId) {
-//        Optional<User> user = userRepository.findById(userId);
-//        if (user.isPresent()) {
-//            User userEntity = user.get();
-//            Cart newCart = new Cart();
-//            newCart.setUser(userEntity);
-//            newCart.setItems(new ArrayList<>());
-//            newCart.setTotalCost(0.0);
-//            cartRepository.save(newCart);
-//        } else {
-//            throw new RuntimeException("При очистке корзины возникла ошибка");
-//        }
-//
-//    }
 
     @Override
     public void increaseQuantity(Integer userId, Integer pizzaId) {
