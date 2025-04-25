@@ -1,6 +1,7 @@
 package com.daniilkhanukov.spring.pizza_website.service;
 
 import com.daniilkhanukov.spring.pizza_website.entity.Cart;
+import com.daniilkhanukov.spring.pizza_website.entity.CartItem;
 import com.daniilkhanukov.spring.pizza_website.entity.Order;
 import com.daniilkhanukov.spring.pizza_website.repository.CartRepository;
 import com.daniilkhanukov.spring.pizza_website.repository.OrderRepository;
@@ -49,29 +50,44 @@ public class OrderServiceImpl implements OrderService {
 
 //    @Override
 //    public Order processOrder(Integer userId, String deliveryAddress) {
-//        Cart cart = cartRepository.findByUserId(userId);
-//        if (cart == null || cart.getItems().isEmpty()) {
-//            throw new RuntimeException("Корзина пуста или никогда не была создана");
+//        Cart original = cartRepository.findByUserId(userId);
+//        if (original == null || original.getItems().isEmpty()) {
+//            throw new RuntimeException("Корзина пуста или не найдена");
 //        }
 //
-//        Order order = new Order();
-//        order.setDeliveryAddress(deliveryAddress);
-//        order.setCart(cart);
+//        // 2. Клонируем корзину
+//        Cart snapshot = new Cart();
+//        snapshot.setUser(original.getUser());
+//        snapshot.setTotalCost(original.getTotalCost());
+//        for (CartItem item : original.getItems()) {
+//            CartItem copy = new CartItem();
+//            copy.setPizza(item.getPizza());
+//            copy.setQuantity(item.getQuantity());
+//            copy.setCart(snapshot);
+//            snapshot.getItems().add(copy);
+//        }
+//        cartRepository.save(snapshot);
 //
+//
+//        Order order = new Order(deliveryAddress, snapshot, original.getUser());
 //        orderRepository.save(order);
 //
-//        clearCart(userId);
-//        return null;
-//    }
 //
-//    @Override
-//    public void clearCart(Integer userId) {
-//        Cart cart = cartRepository.findByUserId(userId);
-//        if (cart != null) {
-//            cart.getItems().clear();
-//            cart.setTotalCost(0.0);
-//            cartRepository.save(cart);
-//        }
+//        original.getItems().clear();
+//        original.setTotalCost(0.0);
+//        cartRepository.save(original);
 //
+//        return order;
 //    }
+
+    @Override
+    public void clearCart(Integer userId) {
+        Cart cart = cartRepository.findByUserId(userId);
+        if (cart != null) {
+            cart.getItems().clear();
+            cart.setTotalCost(0.0);
+            cartRepository.save(cart);
+        }
+
+    }
 }

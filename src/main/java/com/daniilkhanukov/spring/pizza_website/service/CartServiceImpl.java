@@ -6,6 +6,7 @@ import com.daniilkhanukov.spring.pizza_website.entity.Pizza;
 import com.daniilkhanukov.spring.pizza_website.entity.User;
 import com.daniilkhanukov.spring.pizza_website.repository.CartRepository;
 import com.daniilkhanukov.spring.pizza_website.repository.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -57,7 +58,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart addItemToCart(Integer userId, Pizza pizza, int quantity) {
-        Cart cart = cartRepository.findByUserId(userId);
+        Cart cart = cartRepository.findFirstByUserIdOrderByIdDesc(userId);
         if (cart == null) {
             Optional<User> user = userRepository.findById(userId);
             if (user.isPresent()) {
@@ -110,5 +111,40 @@ public class CartServiceImpl implements CartService {
         Cart cart = findByUserId(userId); // Находим корзину
         cart.decreaseQuantity(pizzaId); // Вызываем метод из Cart для уменьшения
         cartRepository.save(cart); // Сохраняем изменения в базе
+    }
+
+    @Transactional
+    public Cart cloneCartForOrder(Cart original, User user) {
+        Cart clone = new Cart();
+        clone.setTotalCost(original.getTotalCost());
+        clone.setUser(user);
+
+        List<CartItem> itemsCopy = new ArrayList<>();
+        for (CartItem i : original.getItems()) {
+            CartItem copy = new CartItem();
+            copy.setPizza(i.getPizza());
+            copy.setQuantity(i.getQuantity());
+            copy.setCart(clone);
+            itemsCopy.add(copy);
+        }
+        clone.setItems(itemsCopy);
+        return cartRepository.save(clone);
+    }
+
+    public Cart getCurrentCartForUser(Integer userId) {
+        Cart cart = cartRepository.findFirstByUserIdOrderByIdDesc(userId);
+        if (cart == null) {
+            User user = userRepository.findById(userId)
+                    .orElseThrow(() -> new RuntimeException("Пользователь с id " + userId + " не найден"));
+        }
+        return cart;
+    }
+
+    public void clearCartById(Integer cartId) {
+        Cart cart = cartRepository.findById(cartId)
+                .orElseThrow(() -> new RuntimeException("Cart with id " + cartId + " not found"));
+        cart.getItems().clear();
+        cart.setTotalCost(0.0);
+        cartRepository.save(cart);
     }
 }

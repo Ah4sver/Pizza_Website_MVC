@@ -18,7 +18,7 @@ public class Order {
     @Column(name = "delivery_address")
     private String deliveryAddress;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
@@ -26,13 +26,26 @@ public class Order {
     @JoinColumn(name = "user_id")
     private User user;
 
+    @Column(name = "order_total")
+    private Double total;
+
+
     public Order() {
     }
 
-    public Order(String deliveryAddress, Cart cart, User user) {
+    public Order(String deliveryAddress, Cart cart, User user, Double total) {
         this.deliveryAddress = deliveryAddress;
         this.cart = cart;
         this.user = user;
+        this.total = total;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
     }
 
     public Integer getId() {

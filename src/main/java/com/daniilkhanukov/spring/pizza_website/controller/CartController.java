@@ -58,10 +58,10 @@ public class CartController {
         }
         User user = getCurrentUser(principal);
         Cart cart = null;
-        if (cartService.findByUserId(user.getId()) == null) {
+        if (cartService.getCurrentCartForUser(user.getId()) == null) {
             cart = new Cart();
         } else {
-            cart = cartService.findByUserId(user.getId());
+            cart = cartService.getCurrentCartForUser(user.getId());
         }
         model.addAttribute("cart", cart);
         model.addAttribute("user", user);
@@ -165,13 +165,27 @@ public class CartController {
     @PostMapping("/cart/order")
     public String createOrder(@RequestParam String deliveryAddress, Principal principal, Model model) {
         User user = getCurrentUser(principal);
-        Cart cart = cartService.findByUserId(user.getId());
+        Cart cart = cartService.getCurrentCartForUser(user.getId());
         if (cart == null || cart.getItems().isEmpty()) {
             model.addAttribute("error", "Ваша корзина пуста \n Время выбрать любимую пиццу!");
             return "cart";
         }
-        Order order = new Order(deliveryAddress, cart, user);
+//        Cart snapshot = cartService.cloneCartForOrder(cart, user);
+//        Cart snapshot = cart;
+//        Order order = new Order(deliveryAddress, snapshot, user);
+
+        Double orderTotal = cart.getTotalCost();
+        Order order = new Order();
+        order.setUser(user);
+        order.setDeliveryAddress(deliveryAddress);
+        order.setTotal(orderTotal);
+        order.setCart(cart);
         orderService.save(order);
+//        orderService.clearCart(user.getId());
+        cartService.clearCartById(cart.getId());
+//        snapshot.setUser(cart.getUser());
+//        cartService.save(snapshot);
+//        orderService.processOrder(user.getId(), deliveryAddress);
         return "redirect:/order/success";
     }
 

@@ -24,12 +24,13 @@
             padding: 5px 10px;
             text-decoration: none;
             border-radius: 4px;
+            white-space: nowrap;
         }
         .delete-button:hover {
             background-color: #c9302c;
         }
         .modal-overlay {
-            display: none; /* скрыто по умолчанию */
+            display: none;
             position: fixed;
             z-index: 9999;
             left: 0;
@@ -37,11 +38,11 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgba(0,0,0,0.5); /* полупрозрачный фон */
+            background-color: rgba(0,0,0,0.5);
         }
         .modal-content {
             background-color: #ffffff;
-            margin: 15% auto; /* 15% от верхней части и по центру */
+            margin: 15% auto;
             padding: 20px;
             border: 1px solid #888;
             width: 300px; /* можно изменить под свои нужды */
