@@ -34,31 +34,4 @@ class LoginLoggingAspect implements ApplicationListener<AbstractAuthenticationEv
             logger.warn("Неудачная попытка входа для '{}'. Причина: {}", username, reason);
         }
     }
-
-//    @AfterReturning(pointcut = "execution(* com.daniilkhanukov.spring.pizza_website.controller.AccountController.login(..))", returning = "result")
-//    public void logSuccessfulLogin(JoinPoint joinPoint, Object result) {
-//        if ("redirect:/home".equals(result)) {
-//            Object[] args = joinPoint.getArgs();
-//            String username = extractUsernameFromArgs(args);
-//            if (username != null) {
-//                logger.info("Пользователь {} вошел в систему", username);
-//            }
-//        }
-//    }
-//
-//    @AfterThrowing(pointcut = "execution(* com.daniilkhanukov.spring.pizza_website.controller.AccountController.login(..))", throwing = "ex")
-//    public void logFailedLogin(JoinPoint joinPoint, Throwable ex) {
-//        Object[] args = joinPoint.getArgs();
-//        String username = extractUsernameFromArgs(args);
-//        logger.warn("Неудачная попытка входа для {}: {}", username != null ? username : "неизвестного пользователя", ex.getMessage());
-//    }
-//
-//    private String extractUsernameFromArgs(Object[] args) {
-//        for (Object arg : args) {
-//            if (arg instanceof String && arg.toString().contains("@")) {
-//                return (String) arg;
-//            }
-//        }
-//        return null;
-//    }
 }

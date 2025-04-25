@@ -98,7 +98,7 @@
             <td>${order.user.username}</td>
             <td>${order.user.email}</td>
             <td>
-                <c:forEach var="item" items="${order.cart.items}">
+                <c:forEach var="item" items="${order.items}">
                     ${item.pizza.name} (x${item.quantity})<br/>
                 </c:forEach>
             </td>

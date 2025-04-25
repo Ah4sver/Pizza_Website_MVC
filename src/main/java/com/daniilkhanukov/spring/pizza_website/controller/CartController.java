@@ -9,12 +9,13 @@ import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -56,15 +57,15 @@ public class CartController {
         if (principal == null) {
             return "redirect:/cart/anonymous";
         }
-        User user = getCurrentUser(principal);
-        Cart cart = null;
-        if (cartService.getCurrentCartForUser(user.getId()) == null) {
-            cart = new Cart();
-        } else {
-            cart = cartService.getCurrentCartForUser(user.getId());
-        }
-        model.addAttribute("cart", cart);
-        model.addAttribute("user", user);
+            User user = getCurrentUser(principal);
+            Cart cart = null;
+            if (cartService.getCurrentCartForUser(user.getId()) == null) {
+                cart = new Cart();
+            } else {
+                cart = cartService.getCurrentCartForUser(user.getId());
+            }
+            model.addAttribute("cart", cart);
+            model.addAttribute("user", user);
         return "cart";
     }
 
@@ -129,13 +130,6 @@ public class CartController {
         return "redirect:/cart";
     }
 
-//    @GetMapping("/cart/add/{pizzaId}")
-//    public String addToCart(@PathVariable Integer pizzaId, HttpSession session) {
-//        Cart cart = getOrCreateCart(session);
-//        cartService.addItemToCart(cart, pizzaId, 1); // Добавляем 1 пиццу
-//        return "redirect:/pizza";
-//    }
-
     @GetMapping("/cart/add/{pizzaId}")
     public String addToCart(@PathVariable Integer pizzaId, HttpSession session, Principal principal) {
         Optional<Pizza> pizzaOptional = pizzaService.findById(pizzaId);
@@ -170,22 +164,9 @@ public class CartController {
             model.addAttribute("error", "Ваша корзина пуста \n Время выбрать любимую пиццу!");
             return "cart";
         }
-//        Cart snapshot = cartService.cloneCartForOrder(cart, user);
-//        Cart snapshot = cart;
-//        Order order = new Order(deliveryAddress, snapshot, user);
+        orderService.createOrder(user.getId(), deliveryAddress);
+        orderService.clearCart(user.getId());
 
-        Double orderTotal = cart.getTotalCost();
-        Order order = new Order();
-        order.setUser(user);
-        order.setDeliveryAddress(deliveryAddress);
-        order.setTotal(orderTotal);
-        order.setCart(cart);
-        orderService.save(order);
-//        orderService.clearCart(user.getId());
-        cartService.clearCartById(cart.getId());
-//        snapshot.setUser(cart.getUser());
-//        cartService.save(snapshot);
-//        orderService.processOrder(user.getId(), deliveryAddress);
         return "redirect:/order/success";
     }
 

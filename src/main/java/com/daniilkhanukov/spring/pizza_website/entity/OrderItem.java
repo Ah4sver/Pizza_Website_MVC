@@ -3,30 +3,30 @@ package com.daniilkhanukov.spring.pizza_website.entity;
 import jakarta.persistence.*;
 
 @Entity
-@Table(name = "cart_items")
-public class CartItem {
+@Table(name = "order_items")
+public class OrderItem {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
     private Integer id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "cart_id")
-    private Cart cart;
+    @ManyToOne
+    @JoinColumn(name = "order_id")
+    private Order order;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne
     @JoinColumn(name = "pizza_id")
     private Pizza pizza;
 
     @Column(name = "quantity")
-    private int quantity;
+    private Integer quantity;
 
-    public CartItem() {
+    public OrderItem() {
     }
 
-    public CartItem(Cart cart, Pizza pizza, int quantity) {
-        this.cart = cart;
+    public OrderItem(Order order, Pizza pizza, Integer quantity) {
+        this.order = order;
         this.pizza = pizza;
         this.quantity = quantity;
     }
@@ -39,12 +39,12 @@ public class CartItem {
         this.id = id;
     }
 
-    public Cart getCart() {
-        return cart;
+    public Order getOrder() {
+        return order;
     }
 
-    public void setCart(Cart cart) {
-        this.cart = cart;
+    public void setOrder(Order order) {
+        this.order = order;
     }
 
     public Pizza getPizza() {
@@ -55,11 +55,11 @@ public class CartItem {
         this.pizza = pizza;
     }
 
-    public int getQuantity() {
+    public Integer getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(Integer quantity) {
         this.quantity = quantity;
     }
 }

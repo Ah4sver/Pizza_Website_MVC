@@ -18,7 +18,7 @@ public class Order {
     @Column(name = "delivery_address")
     private String deliveryAddress;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "cart_id")
     private Cart cart;
 
@@ -29,6 +29,9 @@ public class Order {
     @Column(name = "order_total")
     private Double total;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<OrderItem> items = new ArrayList<>();
+
 
     public Order() {
     }
@@ -38,6 +41,14 @@ public class Order {
         this.cart = cart;
         this.user = user;
         this.total = total;
+    }
+
+    public List<OrderItem> getItems() {
+        return items;
+    }
+
+    public void setItems(List<OrderItem> items) {
+        this.items = items;
     }
 
     public Double getTotal() {
