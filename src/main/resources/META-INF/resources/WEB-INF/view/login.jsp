@@ -1,31 +1,8 @@
 <!DOCTYPE html>
+<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
-<%--<head>--%>
-<%--    <title>Вход</title>--%>
-<%--</head>--%>
-<%--<body>--%>
-<%--<h1>Вход</h1>--%>
-<%--<form method="post" action="/login">--%>
-<%--    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
-
-<%--    <label>Почта: <input type="text" name="email"></label>--%>
-<%--    <br>--%>
-<%--    <br>--%>
-<%--    <label>Пароль: <input type="password" name="password"></label>--%>
-<%--    <br>--%>
-<%--    <br>--%>
-<%--    <button type="submit">Войти</button>--%>
-<%--    <br>--%>
-<%--    <br>--%>
-<%--</form>--%>
-<%--<a href="/register">Регистрация</a>--%>
-<%--<br>--%>
-<%--<br>--%>
-<%--<a href="/pizza">Вернуться на главную</a>--%>
-<%--</body>--%>
-<%--</html>--%>
 <head>
     <title>Вход</title>
     <style>
@@ -85,10 +62,18 @@
 <body>
 <div class="container">
     <h1>Вход</h1>
+    <c:if test="${not empty sessionScope.loginError}">
+        <div class="alert alert-danger">${sessionScope.loginError}</div>
+        <c:remove var="loginError" scope="session" />
+    </c:if>
+    <c:if test="${param.logout != null}">
+        <div class="alert alert-success">Вы успешно вышли</div>
+    </c:if>
     <form method="post" action="/login">
         <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
         <label>Почта:</label>
-        <input type="text" name="email" placeholder="Введите вашу почту"/>
+        <input type="text" name="email" placeholder="Введите вашу почту" value="${sessionScope.lastEmail}"/>
+        <c:remove var="lastEmail" scope="session" />
         <label>Пароль:</label>
         <input type="password" name="password" placeholder="Введите ваш пароль"/>
         <button type="submit">Войти</button>

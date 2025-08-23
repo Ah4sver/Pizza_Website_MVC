@@ -10,12 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -69,6 +65,7 @@ public class CartController {
         return "cart";
     }
 
+    // Удаление пиццы из анонимной корзины
     @GetMapping("/cart/anonymous/remove/{pizzaId}")
     public String removeFromAnonymousCart(@PathVariable Integer pizzaId, HttpSession session) {
         SessionCart sessionCart = (SessionCart) session.getAttribute("sessionCart");
@@ -130,6 +127,7 @@ public class CartController {
         return "redirect:/cart";
     }
 
+    // Добавление в корзину
     @GetMapping("/cart/add/{pizzaId}")
     public String addToCart(@PathVariable Integer pizzaId, HttpSession session, Principal principal) {
         Optional<Pizza> pizzaOptional = pizzaService.findById(pizzaId);
@@ -156,8 +154,17 @@ public class CartController {
         return "order-success";
     }
 
+    // Создание заказа
     @PostMapping("/cart/order")
     public String createOrder(@RequestParam String deliveryAddress, Principal principal, Model model) {
+        if (deliveryAddress == null || deliveryAddress.trim().isEmpty()) {
+            model.addAttribute("error", "Пожалуйста, введите адрес доставки заказа");
+            User user = getCurrentUser(principal);
+            Cart cart = cartService.getCurrentCartForUser(user.getId());
+            model.addAttribute("cart", cart);
+            model.addAttribute("user", user);
+            return "cart";
+        }
         User user = getCurrentUser(principal);
         Cart cart = cartService.getCurrentCartForUser(user.getId());
         if (cart == null || cart.getItems().isEmpty()) {
@@ -170,6 +177,7 @@ public class CartController {
         return "redirect:/order/success";
     }
 
+    // Получение текущего пользователя
     private User getCurrentUser(Principal principal) {
         String email = principal.getName();
         Optional<User> optionalUser = userServiceImpl.findByEmail(email);

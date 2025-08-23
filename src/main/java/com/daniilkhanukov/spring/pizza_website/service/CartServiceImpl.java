@@ -1,10 +1,8 @@
 package com.daniilkhanukov.spring.pizza_website.service;
 
-import com.daniilkhanukov.spring.pizza_website.entity.Cart;
-import com.daniilkhanukov.spring.pizza_website.entity.CartItem;
-import com.daniilkhanukov.spring.pizza_website.entity.Pizza;
-import com.daniilkhanukov.spring.pizza_website.entity.User;
+import com.daniilkhanukov.spring.pizza_website.entity.*;
 import com.daniilkhanukov.spring.pizza_website.repository.CartRepository;
+import com.daniilkhanukov.spring.pizza_website.repository.PizzaRepository;
 import com.daniilkhanukov.spring.pizza_website.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +18,24 @@ public class CartServiceImpl implements CartService {
 
     private final CartRepository cartRepository;
     private final UserRepository userRepository;
+    private final PizzaRepository pizzaRepository;
+
     @Autowired
-    public CartServiceImpl(CartRepository cartRepository, UserRepository userRepository) {
+    public CartServiceImpl(CartRepository cartRepository, UserRepository userRepository, PizzaRepository pizzaRepository) {
         this.cartRepository = cartRepository;
         this.userRepository = userRepository;
+        this.pizzaRepository = pizzaRepository;
+    }
+
+    private Cart getOrCreateCartForUser(Integer userId) {
+        return cartRepository.findByUserIdWithDetails(userId)
+                .orElseGet(() -> {
+                    User user = userRepository.findById(userId)
+                            .orElseThrow(() -> new RuntimeException("Пользователь не найден. Id: " + userId));
+                    Cart newCart = new Cart();
+                    newCart.setUser(user);
+                    return cartRepository.save(newCart);
+                });
     }
 
     @Override
@@ -53,64 +65,7 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public Cart findByUserId(Integer userId) {
-        return cartRepository.findByUserId(userId);
-    }
-
-    @Override
-    public Cart addItemToCart(Integer userId, Pizza pizza, int quantity) {
-        Cart cart = cartRepository.findFirstByUserIdOrderByIdDesc(userId);
-        if (cart == null) {
-            Optional<User> user = userRepository.findById(userId);
-            if (user.isPresent()) {
-                User userEntity = user.get();
-                Cart newCart = new Cart();
-                newCart.setUser(userEntity);
-                newCart.setItems(new ArrayList<>());
-                newCart.setTotalCost(0.0);
-                return cartRepository.save(newCart);
-            }
-            throw new RuntimeException("Корзина для данного пользователя не была найдена. Id пользователя: " + userId);
-        }
-        Optional<CartItem> existingItem = cart.getItems().stream()
-                .filter(item -> Objects.equals(item.getPizza().getId(), pizza.getId()))
-                .findFirst();
-        if (existingItem.isPresent()) {
-            CartItem item = existingItem.get();
-            item.setQuantity(item.getQuantity() + quantity);
-        } else {
-            CartItem newItem = new CartItem();
-            newItem.setPizza(pizza);
-            newItem.setQuantity(quantity);
-            newItem.setCart(cart);
-            cart.getItems().add(newItem);
-        }
-        cart.recalculateTotalCost();
-        return cartRepository.save(cart);
-    }
-
-    @Override
-    public Cart removeItemFromCart(Integer userId, Integer cartItemId) {
-        Cart cart = cartRepository.findByUserId(userId);
-        if (cart == null) {
-            throw new RuntimeException("Корзина для данного пользователя не была найдена");
-        }
-        cart.getItems().removeIf(item -> Objects.equals(item.getId(), cartItemId));
-        cart.recalculateTotalCost();
-        return cartRepository.save(cart);
-    }
-
-    @Override
-    public void increaseQuantity(Integer userId, Integer pizzaId) {
-        Cart cart = findByUserId(userId); // Находим корзину
-        cart.increaseQuantity(pizzaId); // Вызываем метод из Cart для увеличения
-        cartRepository.save(cart); // Сохраняем изменения в базе
-    }
-
-    @Override
-    public void decreaseQuantity(Integer userId, Integer pizzaId) {
-        Cart cart = findByUserId(userId); // Находим корзину
-        cart.decreaseQuantity(pizzaId); // Вызываем метод из Cart для уменьшения
-        cartRepository.save(cart); // Сохраняем изменения в базе
+        return getOrCreateCartForUser(userId);
     }
 
     @Transactional
@@ -131,13 +86,86 @@ public class CartServiceImpl implements CartService {
         return cartRepository.save(clone);
     }
 
-    public Cart getCurrentCartForUser(Integer userId) {
-        Cart cart = cartRepository.findFirstByUserIdOrderByIdDesc(userId);
-        if (cart == null) {
-            User user = userRepository.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("Пользователь с id " + userId + " не найден"));
+    @Override
+    public Cart addItemToCart(Integer userId, Pizza pizza, int quantity) {
+        Cart cart = getOrCreateCartForUser(userId);
+
+        Optional<CartItem> existingItem = cart.getItems().stream()
+                .filter(item -> Objects.equals(item.getPizza().getId(), pizza.getId()))
+                .findFirst();
+
+        if (existingItem.isPresent()) {
+            CartItem item = existingItem.get();
+            item.setQuantity(item.getQuantity() + quantity);
+        } else {
+            CartItem newItem = new CartItem();
+            newItem.setPizza(pizza);
+            newItem.setQuantity(quantity);
+            newItem.setCart(cart);
+            cart.getItems().add(newItem);
         }
-        return cart;
+
+        cart.recalculateTotalCost();
+        return cartRepository.save(cart);
+    }
+
+    @Override
+    public Cart removeItemFromCart(Integer userId, Integer pizzaId) {
+        Cart cart = getOrCreateCartForUser(userId);
+        cart.getItems().removeIf(item -> Objects.equals(item.getPizza().getId(), pizzaId));
+        cart.recalculateTotalCost();
+        return cartRepository.save(cart);
+    }
+
+    @Override
+    public void increaseQuantity(Integer userId, Integer pizzaId) {
+        Cart cart = getOrCreateCartForUser(userId);
+        cart.increaseQuantity(pizzaId);
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public void decreaseQuantity(Integer userId, Integer pizzaId) {
+        Cart cart = getOrCreateCartForUser(userId);
+        cart.decreaseQuantity(pizzaId);
+        cartRepository.save(cart);
+    }
+
+    @Override
+    public Cart getCurrentCartForUser(Integer userId) {
+        return getOrCreateCartForUser(userId);
+    }
+
+    @Override
+    @Transactional
+    public void mergeSessionCart(Integer userId, SessionCart sessionCart) {
+
+        Cart userCart = getOrCreateCartForUser(userId);
+
+        for (SessionCartItem sessionItem : sessionCart.getItems()) {
+            Pizza pizzaFromSession = sessionItem.getPizza();
+
+            Optional<CartItem> existingItemOpt = userCart.getItems().stream()
+                    .filter(item -> Objects.equals(item.getPizza().getId(), pizzaFromSession.getId()))
+                    .findFirst();
+
+            if (existingItemOpt.isPresent()) {
+                CartItem existingItem = existingItemOpt.get();
+                existingItem.setQuantity(existingItem.getQuantity() + sessionItem.getQuantity());
+            } else {
+                CartItem newItem = new CartItem();
+
+                Pizza managedPizza = pizzaRepository.findById(pizzaFromSession.getId())
+                        .orElseThrow(() -> new RuntimeException("Пицца не найдена"));
+                newItem.setPizza(managedPizza);
+                newItem.setQuantity(sessionItem.getQuantity());
+                newItem.setCart(userCart);
+                userCart.getItems().add(newItem);
+            }
+        }
+        userCart.recalculateTotalCost();
+
+        cartRepository.save(userCart);
     }
 
     public void clearCartById(Integer cartId) {

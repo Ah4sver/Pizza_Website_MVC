@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15
+    container_name: pizza_db_container
+    environment:
+      POSTGRES_USER: pizza_web_db_user
+      POSTGRES_PASSWORD: pizza_web_db_password
+      POSTGRES_DB: pizza_website_db
+      POSTGRES_HOST_AUTH_METHOD: trust
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U pizza_web_db_user -d pizza_website_db" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  app:
+    build: .
+    container_name: pizza_app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "4444:4444"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/pizza_website_db
+      - SPRING_DATASOURCE_USERNAME=pizza_web_db_user
+      - SPRING_DATASOURCE_PASSWORD=pizza_web_db_password
+      - SPRING_LIQUIBASE_ENABLED=true
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+    name: pizza_postgres_data

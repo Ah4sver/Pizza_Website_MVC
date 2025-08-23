@@ -3,46 +3,6 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<%--<head>--%>
-<%--    <title>Аккаунт</title>--%>
-<%--</head>--%>
-<%--<body>--%>
-<%--<h1>Ваш аккаунт</h1>--%>
-<%--<p>Почта: ${user.email}</p>--%>
-<%--<p>Логин: ${user.username}</p>--%>
-<%--<h3>Данные для доставки</h3>--%>
-<%--<p>Укажите ваши данные, чтобы доставка была ещё проще:</p>--%>
-
-
-
-<%--<form:form method="post" action="/account/update" modelAttribute="form">--%>
-<%--    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
-
-<%--    <div>--%>
-<%--        <label>Телефон:</label>--%>
-<%--        <form:input path="phone" placeholder="Формат: +7(ххх)-ххх-хх-хх"/>--%>
-<%--        <form:errors path="phone"/>--%>
-<%--    </div>--%>
-<%--    <br>--%>
-<%--    <div>--%>
-<%--        <label>Адрес:</label>--%>
-<%--        <form:input path="userAddress" style="width: 400px;" placeholder="Формат: Город Москва, улица ..., дом ..., кв. ..., код домофона"/>--%>
-<%--        <form:errors path="userAddress"/>--%>
-<%--    </div>--%>
-<%--    <br>--%>
-<%--    <div>--%>
-<%--        <button type="submit">Сохранить данные доставки</button>--%>
-<%--    </div>--%>
-
-<%--</form:form>--%>
-
-<%--<form method="post" action="/logout">--%>
-<%--    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
-<%--    <button type="submit">Выйти</button>--%>
-<%--</form>--%>
-<%--<p><a href="/pizza">Вернуться на главную</a></p>--%>
-<%--</body>--%>
-<%--</html>--%>
 <head>
     <title>Аккаунт</title>
     <style>
@@ -151,7 +111,6 @@
     <div class="links">
         <a href="/pizza">Вернуться на главную</a>
     </div>
-<%--    <p style="text-align:center;"><a href="/pizza">Вернуться на главную</a></p>--%>
 </div>
 </body>
 </html>

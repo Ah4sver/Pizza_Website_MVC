@@ -15,6 +15,7 @@ public class PizzaController {
         this.pizzaService = pizzaService;
     }
 
+    // Домашняя страница
     @GetMapping("/pizza")
     public String home(Model model) {
         model.addAttribute("pizzas", pizzaService.findAll());

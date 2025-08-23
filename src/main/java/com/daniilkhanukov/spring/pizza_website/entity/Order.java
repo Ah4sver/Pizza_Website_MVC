@@ -36,9 +36,8 @@ public class Order {
     public Order() {
     }
 
-    public Order(String deliveryAddress, Cart cart, User user, Double total) {
+    public Order(String deliveryAddress, User user, Double total) {
         this.deliveryAddress = deliveryAddress;
-        this.cart = cart;
         this.user = user;
         this.total = total;
     }
@@ -93,15 +92,27 @@ public class Order {
 
     @Override
     public String toString() {
-        String pizzasSummary = cart.getItems().stream()
+//        String pizzasSummary = cart.getItems().stream()
+//                .map(item -> item.getPizza().getName() + " x" + item.getQuantity())
+//                .collect(Collectors.joining(", "));
+//
+//        return "Order{" +
+//                "id=" + id +
+//                ", user=" + (user != null ? user.getUsername() : "anonymous") +
+//                ", address='" + deliveryAddress + '\'' +
+//                ", items=[" + pizzasSummary + "]" +
+//                '}';
+        String itemsSummary = org.hibernate.Hibernate.isInitialized(items) && items != null
+                ? items.stream()
                 .map(item -> item.getPizza().getName() + " x" + item.getQuantity())
-                .collect(Collectors.joining(", "));
+                .collect(Collectors.joining(", "))
+                : "[items not initialized]";
 
         return "Order{" +
                 "id=" + id +
                 ", user=" + (user != null ? user.getUsername() : "anonymous") +
                 ", address='" + deliveryAddress + '\'' +
-                ", items=[" + pizzasSummary + "]" +
+                ", items=" + itemsSummary +
                 '}';
     }
 }

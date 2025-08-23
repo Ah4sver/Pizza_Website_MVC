@@ -15,6 +15,7 @@ import org.springframework.stereotype.Component;
 class AccountUpdateLoggingAspect {
     private static final Logger logger = LoggerFactory.getLogger(AccountUpdateLoggingAspect.class);
 
+
     @AfterReturning(pointcut = "execution(* com.daniilkhanukov.spring.pizza_website.controller.AccountController.updateAccountDetails(..))", returning = "result")
     public void logSuccessfulAccountUpdate(JoinPoint joinPoint, Object result) {
         if ("redirect:/account".equals(result)) {
@@ -22,6 +23,7 @@ class AccountUpdateLoggingAspect {
             Authentication auth = extractAuthenticationFromArgs(args);
             if (auth != null) {
                 logger.info("Пользователь {} обновил данные аккаунта", auth.getName());
+
             }
         }
     }

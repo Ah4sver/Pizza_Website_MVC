@@ -1,0 +1,183 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-tables
+      author: Daniil
+      changes:
+        - createTable:
+            tableName: users
+            columns:
+            - column:
+                name: id
+                type: BIGINT
+                autoIncrement: true
+                constraints:
+                  primaryKey: true
+                  nullable: false
+            - column:
+                name: username
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: password
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: email
+                type: VARCHAR(255)
+                constraints:
+                  nullable: false
+            - column:
+                name: phone
+                type: VARCHAR(255)
+            - column:
+                name: address
+                type: VARCHAR(255)
+            - column:
+                name: role
+                type: VARCHAR(255)
+
+        - createTable:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: NUMERIC(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: availability
+                  type: BOOLEAN
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: carts
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: total_cost
+                  type: NUMERIC(10,2)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_carts_user_id
+                    references: users(id)
+
+        - createTable:
+            tableName: cart_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cart_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_cart_items_cart_id
+                    references: carts(id)
+              - column:
+                  name: pizza_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_cart_items_pizza_id
+                    references: pizzas(id)
+              - column:
+                  name: quantity
+                  type: INTEGER
+
+        - createTable:
+            tableName: orders
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: cart_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_orders_cart_id
+                    references: carts(id)
+              - column:
+                  name: delivery_address
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_orders_user_id
+                    references: users(id)
+              - column:
+                  name: order_total
+                  type: NUMERIC(10,2)
+                  constraints:
+                    nullable: false
+
+        - createTable:
+            tableName: order_items
+            columns:
+              - column:
+                  name: id
+                  type: BIGINT
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: order_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_order_items_order_id
+                    references: orders(id)
+              - column:
+                  name: pizza_id
+                  type: BIGINT
+                  constraints:
+                    foreignKeyName: fk_order_items_pizza_id
+                    references: pizzas(id)
+              - column:
+                  name: quantity
+                  type: INTEGER
+
+
+
+
+
+

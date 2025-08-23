@@ -3,47 +3,6 @@
 <!DOCTYPE html>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
-<%--<head>--%>
-<%--    <title>Регистрация</title>--%>
-<%--</head>--%>
-<%--<body>--%>
-<%--<h1>Регистрация</h1>--%>
-
-<%--<form:form method="post" action="/register" modelAttribute="userDTO">--%>
-<%--    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />--%>
-
-<%--    <div>--%>
-<%--        <label>Логин:</label>--%>
-<%--        <form:input path="username"/>--%>
-<%--        <form:errors path="username"/>--%>
-<%--    </div>--%>
-<%--    <br>--%>
-<%--    <c:if test="${not empty error}">--%>
-<%--        <div style="color: red;">${error}</div>--%>
-<%--    </c:if>--%>
-<%--    <div>--%>
-<%--        <label>Почта:</label>--%>
-<%--        <form:input path="email" />--%>
-<%--        <form:errors path="email"/>--%>
-<%--    </div>--%>
-<%--    <br>--%>
-
-<%--    <div>--%>
-<%--        <label>Пароль:</label>--%>
-<%--        <form:password path="password" />--%>
-<%--        <form:errors path="password"/>--%>
-<%--    </div>--%>
-<%--    <br>--%>
-
-<%--    <button type="submit">Зарегистрироваться</button>--%>
-<%--</form:form>--%>
-
-<%--<br>--%>
-<%--<br>--%>
-<%--<a href="/pizza">Вернуться на главную</a>--%>
-
-<%--</body>--%>
-<%--</html>--%>
 <head>
     <title>Регистрация</title>
     <style>

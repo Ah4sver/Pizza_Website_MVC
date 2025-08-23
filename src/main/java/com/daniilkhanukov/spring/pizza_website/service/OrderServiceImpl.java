@@ -37,14 +37,21 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.save(order);
     }
 
+
+
     @Override
     public Optional<Order> findById(Integer id) {
         return orderRepository.findById(id);
     }
 
     @Override
+    public Optional<Order> findByIdWithItems(Integer id) {
+        return orderRepository.findByIdWithDetails(id);
+    }
+
+    @Override
     public List<Order> findAll() {
-        return orderRepository.findAll();
+        return orderRepository.findAllWithDetails();
     }
 
     @Override
@@ -52,23 +59,11 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.delete(order);
     }
 
-    @Override
-    public void clearCart(Integer userId) {
-        Cart cart = cartRepository.findByUserId(userId);
-        if (cart != null) {
-            cart.getItems().clear();
-            cart.setTotalCost(0.0);
-            cartRepository.save(cart);
-        }
-
-    }
-
     @Transactional
     public void createOrder(Integer userId, String deliveryAddress) {
-        Cart cart = cartRepository.findByUserId(userId);
-        if (cart == null || cart.getItems().isEmpty()) {
-            throw new RuntimeException("Корзина пуста");
-        }
+        Cart cart = cartRepository.findByUserIdWithDetails(userId)
+                .filter(c -> !c.getItems().isEmpty())
+                .orElseThrow(() -> new RuntimeException("Корзина пуста или не найдена"));
 
         Order order = new Order();
         order.setUser(cart.getUser());
@@ -79,12 +74,21 @@ public class OrderServiceImpl implements OrderService {
         for (CartItem cartItem : cart.getItems()) {
             OrderItem orderItem = new OrderItem();
             orderItem.setOrder(order);
-            orderItem.setPizza(cartItem.getPizza());
+            orderItem.setPizza(cartItem.getPizza()); // Нет доп. запроса
             orderItem.setQuantity(cartItem.getQuantity());
             orderItems.add(orderItem);
         }
         order.setItems(orderItems);
 
         orderRepository.save(order);
+    }
+
+    @Override
+    public void clearCart(Integer userId) {
+        cartRepository.findByUserIdWithDetails(userId).ifPresent(cart -> {
+            cart.getItems().clear();
+            cart.setTotalCost(0.0);
+            cartRepository.save(cart);
+        });
     }
 }

@@ -3,42 +3,6 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 
 <html>
-<%--<head>--%>
-<%--    <title>Корзина (анонимный пользователь)</title>--%>
-<%--    <style>--%>
-<%--        .quantity-control {--%>
-<%--            display: inline-block;--%>
-<%--            margin-left: 10px;--%>
-<%--        }--%>
-<%--        .quantity-control a {--%>
-<%--            text-decoration: none;--%>
-<%--            padding: 5px 10px;--%>
-<%--            border: 1px solid #ccc;--%>
-<%--            background-color: #f0f0f0;--%>
-<%--            color: #333;--%>
-<%--        }--%>
-<%--        .quantity-control a:hover {--%>
-<%--            background-color: #e0e0e0;--%>
-<%--        }--%>
-<%--    </style>--%>
-<%--</head>--%>
-<%--<body>--%>
-<%--<h1>Ваша корзина</h1>--%>
-<%--<c:forEach var="item" items="${sessionCart.items}">--%>
-<%--    <p>--%>
-<%--            ${item.pizza.name} - ${item.pizza.price} руб. x ${item.quantity} = ${item.pizza.price * item.quantity} руб.--%>
-<%--        <span class="quantity-control">--%>
-<%--            <a href="/cart/anonymous/decrease/${item.pizza.id}">-</a>--%>
-<%--            <span>${item.quantity}</span>--%>
-<%--            <a href="/cart/anonymous/increase/${item.pizza.id}">+</a>--%>
-<%--        </span>--%>
-<%--    </p>--%>
-<%--</c:forEach>--%>
-<%--<h3>Итого: ${sessionCart.totalCost} руб.</h3>--%>
-<%--<p>Для оформления заказа необходимо <a href="/login">войти</a> или <a href="/register">зарегистрироваться</a>.</p>--%>
-<%--<a href="/pizza">Вернуться</a>--%>
-<%--</body>--%>
-<%--</html>--%>
 <head>
     <title>Корзина (анонимный пользователь)</title>
     <style>

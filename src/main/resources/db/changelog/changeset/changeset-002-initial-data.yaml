@@ -1,0 +1,251 @@
+databaseChangeLog:
+  - changeSet:
+      id: 002-initial-data
+      author: Daniil
+      changes:
+        - insert:
+            tableName: users
+            columns:
+              - column:
+                  name: username
+                  value: admin
+              - column:
+                  name: password
+                  value: $2a$10$kq2UBwhwNhdQpyNeO6fG.ek67hCly8o/zWQKiLNzpkSaxUscBSHPe 
+              - column:
+                  name: email
+                  value: admin@admin.com
+              - column:
+                  name: phone
+                  value: +7(777)-777-77-77
+              - column:
+                  name: address
+                  value: Город Москва, улица Админа, дом 1, кв. 1, код домофона 111к111
+              - column:
+                  name: role
+                  value: MANAGER
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Маргарита
+              - column:
+                  name: description
+                  value: Классическая пицца с томатным соусом и сыром моцарелла
+              - column:
+                  name: price
+                  valueNumeric: 280.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Пепперони
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой и кусочками пепперони
+              - column:
+                  name: price
+                  valueNumeric: 300.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Гавайская
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой, ветчиной и ананасом
+              - column:
+                  name: price
+                  valueNumeric: 310.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Четыре сыра
+              - column:
+                  name: description
+                  value: 'Пицца с четырьмя сырами: моцареллой, горгонзолой, пармезаном и рикоттой'
+              - column:
+                  name: price
+                  valueNumeric: 340.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Вегетарианская
+              - column:
+                  name: description
+                  value: Пицца с болгарским перцем, оливками, луком, грибами и помидорами
+              - column:
+                  name: price
+                  valueNumeric: 270.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Курица Барбекю
+              - column:
+                  name: description
+                  value: Пицца с соусом барбекю, курицей, красным луком и кинзой
+              - column:
+                  name: price
+                  valueNumeric: 330.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Мясная Любовь
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой, пепперони, колбасой и беконом
+              - column:
+                  name: price
+                  valueNumeric: 360.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Морская
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой, креветками и кальмарами
+              - column:
+                  name: price
+                  valueNumeric: 400.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Мексиканская
+              - column:
+                  name: description
+                  value: Пицца с острой сальсой, халапеньо, черной фасолью и кукурузой
+              - column:
+                  name: price
+                  valueNumeric: 320.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Шпинат и Фета
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, шпинатом, сыром фета и оливками
+              - column:
+                  name: price
+                  valueNumeric: 300.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Капризная
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой, ветчиной, артишоками, грибами и оливками
+              - column:
+                  name: price
+                  valueNumeric: 340.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Дьявольская
+              - column:
+                  name: description
+                  value: Острая пицца с томатным соусом, моцареллой и острой салями
+              - column:
+                  name: price
+                  valueNumeric: 320.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Сиеста
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой, колбасой и запеченными овощами
+              - column:
+                  name: price
+                  valueNumeric: 330.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Грибное Ассорти
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой и разными грибами
+              - column:
+                  name: price
+                  valueNumeric: 330.00
+              - column:
+                  name: availability
+                  valueBoolean: true
+        - insert:
+            tableName: pizzas
+            columns:
+              - column:
+                  name: name
+                  value: Сливочный Рай
+              - column:
+                  name: description
+                  value: Пицца с томатным соусом, моцареллой, грибами, колбасой и сливочным соусом
+              - column:
+                  name: price
+                  valueNumeric: 350.00
+              - column:
+                  name: availability
+                  valueBoolean: true

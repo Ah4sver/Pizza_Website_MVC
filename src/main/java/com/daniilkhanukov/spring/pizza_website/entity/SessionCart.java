@@ -39,12 +39,12 @@ public class SessionCart {
         for (SessionCartItem item : items) {
             if (item.getPizza().getId().equals(pizzaId)) {
                 if (item.getQuantity() > 1) {
-                    item.setQuantity(item.getQuantity() - 1); // Уменьшаем количество на 1
+                    item.setQuantity(item.getQuantity() - 1);
                 } else {
-                    items.remove(item); // Если количество было 1, удаляем элемент
+                    items.remove(item);
                 }
-                recalculateTotalCost(); // Пересчитываем общую стоимость
-                return; // Выходим после обработки
+                recalculateTotalCost();
+                return;
             }
         }
     }
@@ -67,7 +67,7 @@ public class SessionCart {
                 if (item.getQuantity() > 1) {
                     item.setQuantity(item.getQuantity() - 1);
                 } else {
-                    items.remove(item); // Удаляем пиццу, если количество становится 0
+                    items.remove(item);
                 }
                 recalculateTotalCost();
                 return;

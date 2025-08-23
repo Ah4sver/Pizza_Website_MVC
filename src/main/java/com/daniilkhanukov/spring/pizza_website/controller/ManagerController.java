@@ -1,7 +1,6 @@
 package com.daniilkhanukov.spring.pizza_website.controller;
 
 import com.daniilkhanukov.spring.pizza_website.entity.Order;
-import com.daniilkhanukov.spring.pizza_website.entity.Pizza;
 import com.daniilkhanukov.spring.pizza_website.service.OrderService;
 import com.daniilkhanukov.spring.pizza_website.service.PizzaService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,24 +24,28 @@ public class ManagerController {
         this.orderService = orderService;
     }
 
+    // Отображение страницы управления пиццами со списком всех пицц
     @GetMapping
     public String managePizzas(Model model) {
         model.addAttribute("pizzas", pizzaService.findAll());
         return "manager";
     }
 
+    // Переключение статуса наличия пиццы
     @GetMapping("/toggle/{pizzaId}")
     public String togglePizzaAvailability(@PathVariable Integer pizzaId) {
         pizzaService.toggleActiveStatus(pizzaId);
         return "redirect:/manager";
     }
 
+    // Изменение цены пиццы
     @PostMapping("/changePrice/{pizzaId}")
     public String changePizzaPrice(@PathVariable Integer pizzaId, @RequestParam("price") Double price) {
         pizzaService.changePrice(pizzaId, price);
         return "redirect:/manager";
     }
 
+    // Отображение страницы управления заказами с списком всех заказов
     @GetMapping("/orders")
     public String viewOrders(Model model) {
         List<Order> orders = orderService.findAll();
@@ -50,9 +53,10 @@ public class ManagerController {
         return "manager_orders";
     }
 
+    // Удаление заказа
     @GetMapping("/orders/delete/{orderId}")
     public String deleteOrder(@PathVariable("orderId") Integer orderId) {
-        Order order = orderService.findById(orderId)
+        Order order = orderService.findByIdWithItems(orderId)
                 .orElseThrow(() -> new RuntimeException("Заказ с id " + orderId + " не найден"));
         orderService.delete(order);
         return "redirect:/manager/orders";

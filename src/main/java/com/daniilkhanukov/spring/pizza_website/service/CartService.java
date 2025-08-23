@@ -2,7 +2,7 @@ package com.daniilkhanukov.spring.pizza_website.service;
 
 import com.daniilkhanukov.spring.pizza_website.entity.Cart;
 import com.daniilkhanukov.spring.pizza_website.entity.Pizza;
-import com.daniilkhanukov.spring.pizza_website.entity.User;
+import com.daniilkhanukov.spring.pizza_website.entity.SessionCart;
 
 import java.util.List;
 import java.util.Optional;
@@ -17,6 +17,8 @@ public interface CartService {
     Cart addItemToCart(Integer userId, Pizza pizza, int quantity);
     Cart removeItemFromCart(Integer userId, Integer cartItemId);
 //    void clearCart(Integer userId);
-    void increaseQuantity(Integer userId, Integer pizzaId); // Увеличение количества
-    void decreaseQuantity(Integer userId, Integer pizzaId); // Уменьшение количества
+    void increaseQuantity(Integer userId, Integer pizzaId);
+    void decreaseQuantity(Integer userId, Integer pizzaId);
+    Cart getCurrentCartForUser(Integer userId);
+    void mergeSessionCart(Integer id, SessionCart sessionCart);
 }
