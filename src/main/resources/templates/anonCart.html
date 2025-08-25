@@ -1,8 +1,5 @@
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Корзина (анонимный пользователь)</title>
     <style>
@@ -55,20 +52,24 @@
 <body>
 <div class="container">
     <h1>Ваша корзина</h1>
-    <c:forEach var="item" items="${sessionCart.items}">
+    <div th:each="item : ${sessionCart.items}">
         <p>
-                ${item.pizza.name} - ${item.pizza.price} руб. x ${item.quantity} = ${item.pizza.price * item.quantity} руб.
+            <span th:text="${item.pizza.name} + ' - ' + ${item.pizza.price} + ' руб. x ' + ${item.quantity} + ' = ' + (${item.pizza.price} * ${item.quantity}) + ' руб.'"></span>
             <span class="quantity-control">
-                <a href="/cart/anonymous/decrease/${item.pizza.id}">-</a>
-                <span>${item.quantity}</span>
-                <a href="/cart/anonymous/increase/${item.pizza.id}">+</a>
+                <a th:href="@{'/cart/anonymous/decrease/' + ${item.pizza.id}}">-</a>
+                <span th:text="${item.quantity}">1</span>
+                <a th:href="@{'/cart/anonymous/increase/' + ${item.pizza.id}}">+</a>
             </span>
         </p>
-    </c:forEach>
-    <h3>Итого: ${sessionCart.totalCost} руб.</h3>
-    <p style="text-align:center;">Для оформления заказа необходимо <a href="/login">войти</a> или <a href="/register">зарегистрироваться</a>.</p>
-    <div class="links">
-        <a href="/pizza">Вернуться</a>
+    </div>
+    <div th:if="${#lists.isEmpty(sessionCart.items)}">
+        <p style="text-align: center;">Ваша корзина пуста.</p>
+    </div>
+
+    <h3 th:text="'Итого: ' + ${sessionCart.totalCost} + ' руб.'">Итого: 0.0 руб.</h3>
+    <p style="text-align:center;">Для оформления заказа необходимо <a th:href="@{/login}">войти</a> или <a th:href="@{/register}">зарегистрироваться</a>.</p>
+    <div style="text-align: center; margin-top: 20px;">
+        <a th:href="@{/pizza}" style="display: inline-block; text-decoration: none; color: #fff; background-color: #ee6c4d; padding: 10px 20px; border-radius: 4px;">Вернуться к выбору пиццы</a>
     </div>
 </div>
 </body>

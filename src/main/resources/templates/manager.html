@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Управление пиццами</title>
+    <style>
+        .pizza-block {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-bottom: 15px;
+        }
+        .price-form {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Управление пиццами</h1>
+<br>
+<a th:href="@{/pizza}">Вернуться на главную</a>
+<br><br><br>
+<div th:each="pizza : ${pizzas}" class="pizza-block">
+    <h3 th:text="${pizza.name}">Название пиццы</h3>
+    <p th:text="'Цена: ' + ${pizza.price} + ' руб.'">Цена: 300 руб.</p>
+    <p th:text="${pizza.availability} ? 'Статус: В наличии' : 'Статус: Нет в наличии'">Статус</p>
+    <a th:href="@{'/manager/toggle/' + ${pizza.id}}">Переключить статус</a>
+
+    <form class="price-form" th:action="@{'/manager/changePrice/' + ${pizza.id}}" method="post">
+        <label th:for="'price_' + ${pizza.id}">Новая цена:</label>
+        <input type="number" step="1" name="price" th:id="'price_' + ${pizza.id}" th:value="${pizza.price}" required>
+        <button type="submit">Обновить цену</button>
+    </form>
+</div>
+</body>
+</html>

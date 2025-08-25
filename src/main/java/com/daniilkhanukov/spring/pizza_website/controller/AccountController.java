@@ -50,17 +50,30 @@ public class AccountController {
     @GetMapping("/account")
     public String account(Model model, Principal principal) {
         String email = principal.getName();
-        Optional<User> userOpt = userService.findByEmail(email);
-        if (userOpt.isPresent()) {
-            User user = userOpt.get();
+
+        User user = userService.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Аутентифицированный пользователь не найден в базе данных"));
+
+        if (!model.containsAttribute("form")) {
             AccountUpdateForm form = new AccountUpdateForm();
             form.setPhone(user.getPhone());
             form.setUserAddress(user.getUserAddress());
-            model.addAttribute("user", user);
             model.addAttribute("form", form);
-        } else {
-            model.addAttribute("error", "Пользователь не найден.");
         }
+
+        model.addAttribute("user", user);
+
+//        Optional<User> userOpt = userService.findByEmail(email);
+//        if (userOpt.isPresent()) {
+//            User user = userOpt.get();
+//            AccountUpdateForm form = new AccountUpdateForm();
+//            form.setPhone(user.getPhone());
+//            form.setUserAddress(user.getUserAddress());
+//            model.addAttribute("user", user);
+//            model.addAttribute("form", form);
+//        } else {
+//            model.addAttribute("error", "Пользователь не найден.");
+//        }
         return "account";
     }
 
@@ -121,18 +134,45 @@ public class AccountController {
                                        BindingResult bindingResult,
                                        Principal principal,
                                        Model model) {
-        if (bindingResult.hasErrors()) {
-            model.addAttribute("form", form);
-            return "account";
-        }
+//        if (bindingResult.hasErrors()) {
+//            model.addAttribute("form", form);
+//            return "account";
+//        }
+//        String email = principal.getName();
+//        Optional<User> userOpt = userService.findByEmail(email);
+//        if (userOpt.isPresent()) {
+//            User user = userOpt.get();
+//
+//            if (bindingResult.hasErrors()) {
+//                model.addAttribute("user", user);
+//                model.addAttribute("form", form);
+//                return "account";
+//            }
+//
+//            if (form.getPhone() != null && !form.getPhone().isBlank()) {
+//                user.setPhone(form.getPhone());
+//            }
+//            if (form.getUserAddress() != null && !form.getUserAddress().isBlank()) {
+//                user.setUserAddress(form.getUserAddress());
+//            }
+//
+//            userService.update(user);
+//            model.addAttribute("user", user);
+//        } else {
+//            throw new RuntimeException("Пользователь не найден");
+//        }
+//        return "account";
+
         String email = principal.getName();
         Optional<User> userOpt = userService.findByEmail(email);
+
         if (userOpt.isPresent()) {
             User user = userOpt.get();
 
             if (bindingResult.hasErrors()) {
                 model.addAttribute("user", user);
                 model.addAttribute("form", form);
+
                 return "account";
             }
 
@@ -142,12 +182,12 @@ public class AccountController {
             if (form.getUserAddress() != null && !form.getUserAddress().isBlank()) {
                 user.setUserAddress(form.getUserAddress());
             }
-
             userService.update(user);
-            model.addAttribute("user", user);
+
+            return "redirect:/account";
+
         } else {
             throw new RuntimeException("Пользователь не найден");
         }
-        return "redirect:/account";
     }
 }

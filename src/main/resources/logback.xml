@@ -45,7 +45,7 @@
     <!-- Корневой логгер -->
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
-        <appender-ref ref="ROLLING"/>
+<!--        <appender-ref ref="ROLLING"/>-->
     </root>
 
 </configuration>

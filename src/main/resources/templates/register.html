@@ -1,8 +1,5 @@
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Регистрация</title>
     <style>
@@ -70,27 +67,27 @@
 <body>
 <div class="container">
     <h1>Регистрация</h1>
-    <form:form method="post" action="/register" modelAttribute="userDTO">
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+    <div th:if="${error}" class="error" th:text="${error}"></div>
+    <form method="post" th:action="@{/register}" th:object="${userDTO}">
         <div>
             <label>Логин:</label>
-            <form:input path="username" placeholder="Введите логин"/>
-            <form:errors path="username" cssClass="error"/>
+            <input type="text" th:field="*{username}" placeholder="Введите логин"/>
+            <div class="error" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
         </div>
         <div>
             <label>Почта:</label>
-            <form:input path="email" placeholder="Введите вашу почту"/>
-            <form:errors path="email" cssClass="error"/>
+            <input type="email" th:field="*{email}" placeholder="Введите вашу почту"/>
+            <div class="error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
         </div>
         <div>
             <label>Пароль:</label>
-            <form:password path="password" placeholder="Введите пароль"/>
-            <form:errors path="password" cssClass="error"/>
+            <input type="password" th:field="*{password}" placeholder="Введите пароль"/>
+            <div class="error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
         </div>
         <button type="submit">Зарегистрироваться</button>
-    </form:form>
+    </form>
     <div class="links">
-        <a href="/pizza">Вернуться на главную</a>
+        <a th:href="@{/pizza}">Вернуться на главную</a>
     </div>
 </div>
 </body>

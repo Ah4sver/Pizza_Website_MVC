@@ -1,6 +1,5 @@
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Ошибка</title>
     <style>
@@ -23,8 +22,8 @@
 </head>
 <body>
 <h1>Упс, произошла ошибка</h1>
-<p>Код ошибки: ${statusCode}</p>
-<p>${errorMessage}</p>
-<p><a href="/pizza">Вернуться на главную</a></p>
+<p>Код ошибки: <span th:text="${statusCode}">500</span></p>
+<p th:text="${errorMessage}">Что-то пошло не так</p>
+<p><a th:href="@{/pizza}">Вернуться на главную</a></p>
 </body>
 </html>

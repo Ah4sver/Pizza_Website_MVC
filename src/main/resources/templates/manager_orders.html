@@ -1,7 +1,5 @@
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
-<html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>Список заказов</title>
@@ -77,10 +75,8 @@
 </head>
 <body>
 <h1>Заказы за последнее время</h1>
-<c:if test="${empty orders}">
-    <p>Заказов не найдено.</p>
-</c:if>
-<table>
+<p th:if="${#lists.isEmpty(orders)}">Заказов не найдено.</p>
+<table th:unless="${#lists.isEmpty(orders)}">
     <thead>
     <tr>
         <th>Номер заказа</th>
@@ -92,30 +88,26 @@
     </tr>
     </thead>
     <tbody>
-    <c:forEach var="order" items="${orders}">
-        <tr>
-            <td>${order.id}</td>
-            <td>${order.user.username}</td>
-            <td>${order.user.email}</td>
-            <td>
-                <c:forEach var="item" items="${order.items}">
-                    ${item.pizza.name} (x${item.quantity})<br/>
-                </c:forEach>
-            </td>
-            <td>${order.deliveryAddress}</td>
-            <td>
-                <!-- Здесь вызывается функция confirmDelete с параметром order.id -->
-                <a class="delete-button" href="javascript:void(0);" onclick="confirmDelete(${order.id});">
-                    Удалить заказ
-                </a>
-            </td>
-        </tr>
-    </c:forEach>
+    <tr th:each="order : ${orders}">
+        <td th:text="${order.id}">1</td>
+        <td th:text="${order.user.username}">user</td>
+        <td th:text="${order.user.email}">user@mail.com</td>
+        <td>
+            <div th:each="item : ${order.items}">
+                <span th:text="${item.pizza.name} + ' (x' + ${item.quantity} + ')'"></span>
+            </div>
+        </td>
+        <td th:text="${order.deliveryAddress}">Address</td>
+        <td>
+            <a class="delete-button" href="javascript:void(0);" th:onclick="'confirmDelete(' + ${order.id} + ');'">
+                Удалить заказ
+            </a>
+        </td>
+    </tr>
     </tbody>
 </table>
-<p><a href="/pizza">Вернуться на главную</a></p>
+<p><a th:href="@{/pizza}">Вернуться на главную</a></p>
 
-<!-- Модальное окно подтверждения -->
 <div id="confirmModal" class="modal-overlay">
     <div class="modal-content">
         <p>Вы точно уверены в своём выборе?</p>

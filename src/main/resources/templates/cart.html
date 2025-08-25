@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Корзина</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 600px;
+            margin: 70px auto;
+            background-color: #fff;
+            padding: 25px;
+            border-radius: 5px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+        p {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+        .quantity-control a {
+            text-decoration: none;
+            padding: 5px 8px;
+            border: 1px solid #ccc;
+            background-color: #ee6c4d;
+            color: #fff;
+            border-radius: 3px;
+            margin: 0 5px;
+        }
+        .quantity-control a:hover {
+            background-color: #d95c3f;
+        }
+        .error-message {
+            white-space: pre-line;
+            color: #d9534f;
+            font-size: 20px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+        }
+        button {
+            background-color: #ee6c4d;
+            border: none;
+            padding: 10px 15px;
+            color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #d95c3f;
+        }
+        .links {
+            text-align: center;
+            margin-top: 20px;
+        }
+        .links a {
+            text-decoration: none;
+            color: #337;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Ваша корзина</h1>
+    <div th:if="${error}" class="error-message" th:text="${error}"></div>
+
+    <div th:each="item : ${cart.items}">
+        <p>
+            <span th:text="${item.pizza.name} + ' - ' + ${item.pizza.price} + ' руб. x ' + ${item.quantity} + ' = ' + (${item.pizza.price} * ${item.quantity}) + ' руб.'"></span>
+            <span class="quantity-control">
+                <a th:href="@{'/cart/decrease/' + ${item.pizza.id}}">-</a>
+                <span th:text="${item.quantity}">1</span>
+                <a th:href="@{'/cart/increase/' + ${item.pizza.id}}">+</a>
+            </span>
+        </p>
+    </div>
+    <div th:if="${#lists.isEmpty(cart.items)}">
+        <p style="text-align: center;">Ваша корзина пуста.</p>
+    </div>
+
+    <h3 th:text="'Итого: ' + ${cart.totalCost} + ' руб.'">Итого: 0.0 руб.</h3>
+    <form method="post" th:action="@{/cart/order}">
+        <label for="deliveryAddress">Укажите адрес доставки:</label>
+        <br>
+        <input type="text" id="deliveryAddress" name="deliveryAddress"
+               placeholder="Укажите точный адрес: 'Город, улица, дом, код от домофона'"
+               style="width: 100%;"
+               th:value="${user.userAddress}"/>
+        <br>
+        <br>
+        <button type="submit" th:disabled="${#lists.isEmpty(cart.items)}">Оформить заказ</button>
+        <br>
+        <br>
+    </form>
+    <div class="links">
+        <a th:href="@{/pizza}">Вернуться на главную</a>
+    </div>
+</div>
+</body>
+</html>

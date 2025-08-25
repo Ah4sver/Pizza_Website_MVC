@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<%@ taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
-
-<html>
+<html lang="ru" xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Вход</title>
     <style>
@@ -62,25 +59,19 @@
 <body>
 <div class="container">
     <h1>Вход</h1>
-    <c:if test="${not empty sessionScope.loginError}">
-        <div class="alert alert-danger">${sessionScope.loginError}</div>
-        <c:remove var="loginError" scope="session" />
-    </c:if>
-    <c:if test="${param.logout != null}">
-        <div class="alert alert-success">Вы успешно вышли</div>
-    </c:if>
-    <form method="post" action="/login">
-        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+    <div th:if="${session.loginError}" class="alert alert-danger" th:text="${session.loginError}"></div>
+    <div th:if="${param.logout}" class="alert alert-success">Вы успешно вышли</div>
+
+    <form method="post" th:action="@{/login}">
         <label>Почта:</label>
-        <input type="text" name="email" placeholder="Введите вашу почту" value="${sessionScope.lastEmail}"/>
-        <c:remove var="lastEmail" scope="session" />
+        <input type="text" name="email" placeholder="Введите вашу почту" th:value="${session.lastEmail}"/>
         <label>Пароль:</label>
         <input type="password" name="password" placeholder="Введите ваш пароль"/>
         <button type="submit">Войти</button>
     </form>
     <div class="links">
-        <a href="/register">Регистрация</a>
-        <a href="/pizza">Вернуться на главную</a>
+        <a th:href="@{/register}">Регистрация</a>
+        <a th:href="@{/pizza}">Вернуться на главную</a>
     </div>
 </div>
 </body>

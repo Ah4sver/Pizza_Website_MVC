@@ -1,6 +1,5 @@
 package com.daniilkhanukov.spring.pizza_website.config;
 
-import com.daniilkhanukov.spring.pizza_website.repository.UserRepository;
 import com.daniilkhanukov.spring.pizza_website.security.CustomAuthenticationFailureHandler;
 import com.daniilkhanukov.spring.pizza_website.security.CustomAuthenticationSuccessHandler;
 import com.daniilkhanukov.spring.pizza_website.security.CustomUserDetailsService;
@@ -16,14 +15,13 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private UserRepository userRepository;
     @Autowired
     private CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler;
     @Autowired
@@ -40,12 +38,24 @@ public class SecurityConfig {
     }
 
     @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() {
+        return (web) -> web.ignoring().requestMatchers(
+                new AntPathRequestMatcher("/resources/images/"),
+                new AntPathRequestMatcher("/images/**"),
+                new AntPathRequestMatcher("/css/**"),
+                new AntPathRequestMatcher("/js/**"),
+                new AntPathRequestMatcher("/webjars/**")
+        );
+    }
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authenticationProvider(authenticationProvider())
                 .authorizeHttpRequests(authorize -> authorize
                         .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-                        .requestMatchers("/pizza", "/cart", "/register", "/cart/add/**","/cart/anonymous/**", "/resources/images/", "/images/**").permitAll()
+                        .requestMatchers("/cart/anonymous/**", "/cart/add/**").permitAll()
+                        .requestMatchers("/pizza", "/login", "/register").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -66,8 +76,4 @@ public class SecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return (web) -> web.ignoring().requestMatchers("/images/**");
-    }
 }

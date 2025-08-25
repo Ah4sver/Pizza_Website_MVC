@@ -43,7 +43,7 @@ public class CartController {
     @GetMapping("/cart/anonymous")
     public String viewAnonymousCart(Model model, HttpSession session) {
         SessionCart sessionCart = getSessionCart(session);
-        model.addAttribute("cart", sessionCart);
+        model.addAttribute("sessionCart", sessionCart);
         return "anonCart";
     }
 
